@@ -1,0 +1,27 @@
+groups 
+	用途：分组文件 
+	格式：组号 组名 成员 ....
+	类型：输入文件
+
+mission 
+	用途：任务文件
+	格式：题号 题目名称 
+	类型：输入文件
+
+
+match 
+	用途：任务匹配文件
+	格式：组号 题号 题目名称  组名 成员 ....
+	类型：输出文件
+
+finished 
+	用途：完成任务的组信息文件
+	格式：组号 题号 题目
+	类型：输出文件
+
+
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple　要下的包名
+
+打包代码：
+
+pyinstaller -Fw  D:\Code\python\fate\fate\AppNoPandas.py
