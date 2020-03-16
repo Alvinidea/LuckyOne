@@ -242,33 +242,6 @@ class interTool():
         return nums, names, mrow-1
 
 
-    def PageZore_CurrentInfo(self):
-        mexc = excel(MISSIONS)
-        # print(GROUPS)
-        mrow, mcol = mexc.getRowsClosNum()
-
-        gexc = excel(GROUPS)
-        grow, gcol = gexc.getRowsClosNum()
-
-        cexc = excel(CLASSLIST)
-        crow, ccol = cexc.getRowsClosNum()
-
-        fexc = excel(FINISHED)
-        frow, fcol = fexc.getRowsClosNum()
-
-        classname = ''
-        with open("config/config.txt", 'r', encoding='utf-8') as load_f:
-            config = "config/"
-            load_dict = json.load(load_f)
-            classname = load_dict['classname']
-
-        matchInfo = '分组-题目关系已创建！'
-        if os.path.exists(MATCH) == False:
-            matchInfo = '分组-题目未创建！'
-        currentInfo = ['任务数目：', str(mrow-1), '分组数目：', str(grow-1),
-                       '班级人数：', str(crow-1), # '完成数目：', frow,
-                       '班级名称：', classname, '是否匹配：', matchInfo]
-        return currentInfo
     #===========================================================================
 
 
@@ -462,7 +435,7 @@ class interTool():
         # ==================================
         wb3 = openpyxl.Workbook()
         sheet3 = wb3['Sheet']
-        sheet3.append(['姓名', 'name', 'Name', '学号', '工号'])
+        sheet3.append(['姓名', 'name', 'Name'])
         wb3.save(config + classlist)
 
         configinfo = {}
@@ -582,35 +555,28 @@ class ShowMission_Zero(tk.Frame):
     def __init__(self, parent, root):
         super().__init__(parent)
         self.tool = interTool()
-
-
         self.LabelsFrame = tk.LabelFrame(self, text="题目信息", padx=35, pady=35)
         # self.LabelsFrame1.pack()
         self.LabelsFrame.place(x=10, y=10, width=WIDTH-20, height=HEIGHT-20)
         self.nums, self.names, self.mrow = self.tool.PageZore_init()
-        # mrow, grow, crow, frow, classname, matchInfo
-        self.currentInfo = self.tool.PageZore_CurrentInfo()
-        self.curtext = tk.Text(self.LabelsFrame)
-        self.curtext.place(x=WIDTH - 380, y=2, width=300, height=200)
+
         self.text = tk.Text(self.LabelsFrame)
-        self.text.place(x=0, y=2, width=WIDTH - 400, height=HEIGHT - 150)
+        self.text.place(x=0, y=2, width=WIDTH - 200, height=HEIGHT - 150)
         self.textshow()
-        self.currentShow()
+        """        
+        self.num_names = []
+        strs = ''
+        for index in range(0, self.mrow):
+            stri = str(self.nums[index]) + '\t\t' + str(self.names[index])+ '|\n'
+            strs = strs +"|\t"+ stri
+        self.num_name = tk.Label(self.LabelsFrame,text=strs, height=HEIGHT-30 ,font=("宋体", 16, "normal"))
+        self.num_name.pack()"""
 
-
-    def currentShow(self):
-        # mrow, grow, crow, frow, classname, matchInfo
-        self.curtext.delete(0.0, tkinter.END)
-        self.curtext.tag_config('tag1', font=tf.Font(family='微软雅黑', size=14), foreground='red')
-        for index in range(0, len(self.currentInfo), 2):
-            self.curtext.insert(tk.END, self.currentInfo[index] + self.currentInfo[index + 1] + '\n', 'tag1')
 
     def textshow(self):
         self.text.delete(0.0, tkinter.END)
         if len(self.nums) == 0:
             return
-
-        self.text.insert(tk.END, "\n", 'tag')
         self.text.tag_config('tag', font=tf.Font(family='微软雅黑', size=14))
         self.showflag = False
         self.text.insert(tk.END, "\t题号\t\t\t|\t题目", 'tag')
@@ -619,13 +585,10 @@ class ShowMission_Zero(tk.Frame):
             info = '\n\t' + str(self.nums[index]) + '\t\t\t|\t' + str(self.names[index])
             self.text.insert(tk.END, info, 'tag')
 
-
     def flush(self):
         self.nums, self.names, mrow = self.tool.PageZore_init()
-        self.currentInfo = self.tool.PageZore_CurrentInfo()
         index = 0
         self.textshow()
-        self.currentShow()
 
 
 class StartPage_Sign(tk.Frame):
@@ -936,12 +899,6 @@ class Pagetwo_Match(tk.Frame):
     def SaveClick(self):
         if self.flag != False:
             tkinter.messagebox.showinfo(title="提示", message="您还没有进行匹配QAQ")
-            return
-        if os.path.exists(MATCH) == True:
-            if tkinter.messagebox.askyesno(title="提示",message="分组-题目对应关系已经存在，需要覆盖吗？") == True:
-                self.tool.PageMatch_saveInfo(self.GroupsInfo, self.Groups, self.group_single,
-                                             self.MissionsInfo, self.mission_single,
-                                             self.Match)
             return
         if tkinter.messagebox.askyesno(title="提示",message="确定保存分配结果吗？") == True:
             self.tool.PageMatch_saveInfo(self.GroupsInfo,  self.Groups, self.group_single,
